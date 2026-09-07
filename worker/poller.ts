@@ -1,7 +1,10 @@
 import path from "path";
 import dotenv from "dotenv";
 
-dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
+// process.cwd() (not __dirname) so this resolves correctly whether running
+// via ts-node from worker/ or the compiled dist/poller.js — __dirname would
+// shift by one level once compiled into dist/.
+dotenv.config({ path: path.resolve(process.cwd(), "../.env.local") });
 
 import { pollAmazon } from "./pollers/amazon";
 import { pollAshby } from "./pollers/ashby";

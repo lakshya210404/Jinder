@@ -3,7 +3,10 @@ import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import { NormalizedJob } from "./types";
 
-dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
+// process.cwd() (not __dirname) so this resolves correctly whether running
+// via ts-node from worker/ or the compiled dist/poller.js — __dirname would
+// shift by one level once compiled into dist/.
+dotenv.config({ path: path.resolve(process.cwd(), "../.env.local") });
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
