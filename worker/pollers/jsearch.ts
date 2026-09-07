@@ -1,0 +1,92 @@
+import { upsertJobs } from "../db";
+import { fetchJson } from "../http";
+import { extractTags, isRemoteLocation } from "../normalizer";
+import { Country, NormalizedJob } from "../types";
+
+const JSEARCH_API_KEY = process.env.JSEARCH_API_KEY;
+
+// Keep this list short: JSearch on RapidAPI is typically rate/quota limited,
+// and this poller is meant to run every ~5 min per QUERY_TERMS x COUNTRIES.
+const QUERY_TERMS = ["software engineer", "product manager"];
+const COUNTRIES: { code: Country; jsearchParam: string }[] = [
+  { code: "US", jsearchParam: "us" },
+  { code: "CA", jsearchParam: "ca" },
+];
+
+interface JSearchJob {
+  job_id: string;
+  job_title: string;
+  employer_name: string;
+  employer_logo: string | null;
+  job_location: string | null;
+  job_country: string | null;
+  job_is_remote: boolean;
+  job_employment_types: string[] | null;
+  job_apply_link: string;
+  job_description: string | null;
+  job_posted_at_datetime_utc: string | null;
+  job_min_salary: number | null;
+  job_max_salary: number | null;
+}
+
+// As of 2026-09, JSearch's endpoint on RapidAPI is `/search-v2` (the older
+// `/search` path 404s even with an active subscription — the API moved).
+// Response shape is also nested under `data.jobs`, not `data` directly.
+interface JSearchResponse {
+  status: string;
+  data: { jobs: JSearchJob[]; cursor?: string };
+}
+
+export async function pollJSearch(): Promise<void> {
+  if (!JSEARCH_API_KEY) {
+    console.warn("[jsearch] JSEARCH_API_KEY not set, skipping");
+    return;
+  }
+
+  const allJobs: NormalizedJob[] = [];
+
+  for (const { code, jsearchParam } of COUNTRIES) {
+    for (const term of QUERY_TERMS) {
+      const query = encodeURIComponent(`${term} full time`);
+      const url = `https://jsearch.p.rapidapi.com/search-v2?query=${query}&page=1&num_pages=1&country=${jsearchParam}&employment_types=FULLTIME`;
+
+      const data = await fetchJson<JSearchResponse>(url, {
+        "x-rapidapi-key": JSEARCH_API_KEY,
+        "x-rapidapi-host": "jsearch.p.rapidapi.com",
+      });
+
+      if (!data?.data?.jobs) {
+        console.warn(`[jsearch] no data for "${term}" (${code}) — check API subscription/quota`);
+        continue;
+      }
+
+      for (const job of data.data.jobs) {
+        if (!job.job_employment_types?.includes("FULLTIME")) continue;
+        // The `country` query param is a hint, not a strict filter — some
+        // results leak through from elsewhere, so double-check here.
+        if (job.job_country?.toUpperCase() !== code) continue;
+
+        allJobs.push({
+          source: "jsearch",
+          external_id: job.job_id,
+          title: job.job_title,
+          company: job.employer_name,
+          company_logo: job.employer_logo,
+          location: job.job_location,
+          country: code,
+          is_remote: job.job_is_remote || isRemoteLocation(job.job_location),
+          job_type: "full-time",
+          url: job.job_apply_link,
+          description: job.job_description,
+          tags: extractTags(`${job.job_title} ${job.job_description ?? ""}`),
+          salary_min: job.job_min_salary,
+          salary_max: job.job_max_salary,
+          posted_at: job.job_posted_at_datetime_utc ?? new Date().toISOString(),
+        });
+      }
+    }
+  }
+
+  const { count, errors } = await upsertJobs(allJobs);
+  console.log(`[jsearch] upserted ${count} jobs (${errors} errors)`);
+}
