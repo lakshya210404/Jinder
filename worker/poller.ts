@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 // shift by one level once compiled into dist/.
 dotenv.config({ path: path.resolve(process.cwd(), "../.env.local") });
 
+import { pollAdzuna } from "./pollers/adzuna";
 import { pollAmazon } from "./pollers/amazon";
 import { pollAshby } from "./pollers/ashby";
 import { pollGreenhouse } from "./pollers/greenhouse";
@@ -25,6 +26,7 @@ const REMOTEOK_INTERVAL_MS = 10 * 60 * 1000;
 const JOBBANK_INTERVAL_MS = 15 * 60 * 1000;
 const MUSE_INTERVAL_MS = 30 * 60 * 1000; // bigger fetch (up to 40 requests/cycle), so a longer interval
 const JOBICY_INTERVAL_MS = 15 * 60 * 1000;
+const ADZUNA_INTERVAL_MS = 30 * 60 * 1000; // see quota warning in pollers/adzuna.ts before shortening
 
 type PollerFn = () => Promise<void>;
 
@@ -60,6 +62,7 @@ function main(): void {
   schedule("jobbank", pollJobBank, JOBBANK_INTERVAL_MS);
   schedule("themuse", pollTheMuse, MUSE_INTERVAL_MS);
   schedule("jobicy", pollJobicy, JOBICY_INTERVAL_MS);
+  schedule("adzuna", pollAdzuna, ADZUNA_INTERVAL_MS);
 }
 
 main();

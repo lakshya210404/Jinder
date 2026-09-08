@@ -10,7 +10,8 @@ export type Source =
   | "jobbank"
   | "amazon"
   | "themuse"
-  | "jobicy";
+  | "jobicy"
+  | "adzuna";
 
 /** Common shape every poller normalizes its source's response into before upsert. */
 export interface NormalizedJob {
