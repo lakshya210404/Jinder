@@ -1,6 +1,6 @@
 "use client";
 
-import { DEFAULT_FILTERS, FilterState, ROLE_TYPE_LABEL, RoleType } from "@/types/filters";
+import { DEFAULT_FILTERS, ExperienceLevel, FilterState, LEVEL_LABEL, ROLE_TYPE_LABEL, RoleType } from "@/types/filters";
 
 interface Props {
   filters: FilterState;
@@ -12,6 +12,7 @@ const selectClass =
   "rounded-lg border border-surface-border bg-surface-raised px-3 py-2 text-sm text-white outline-none focus:border-white/40";
 
 const ROLE_TYPE_OPTIONS = Object.keys(ROLE_TYPE_LABEL) as RoleType[];
+const LEVEL_OPTIONS = Object.keys(LEVEL_LABEL) as ExperienceLevel[];
 
 export default function Filters({ filters, onChange, resultCount }: Props) {
   const set = <K extends keyof FilterState>(key: K, value: FilterState[K]) =>
@@ -25,6 +26,7 @@ export default function Filters({ filters, onChange, resultCount }: Props) {
     filters.jobType !== "all" ||
     filters.datePosted !== "all" ||
     filters.roleType !== "all" ||
+    filters.level !== "all" ||
     !filters.techOnly;
 
   return (
@@ -54,6 +56,18 @@ export default function Filters({ filters, onChange, resultCount }: Props) {
           {ROLE_TYPE_OPTIONS.map((role) => (
             <option key={role} value={role}>
               {ROLE_TYPE_LABEL[role]}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={filters.level}
+          onChange={(e) => set("level", e.target.value as ExperienceLevel)}
+          className={selectClass}
+        >
+          {LEVEL_OPTIONS.map((level) => (
+            <option key={level} value={level}>
+              {LEVEL_LABEL[level]}
             </option>
           ))}
         </select>

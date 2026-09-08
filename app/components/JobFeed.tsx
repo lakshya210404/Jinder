@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Job } from "@/types/job";
-import { DEFAULT_FILTERS, DEFAULT_TECH_KEYWORDS, FilterState, ROLE_TYPE_KEYWORDS } from "@/types/filters";
+import { DEFAULT_FILTERS, DEFAULT_TECH_KEYWORDS, FilterState, matchesLevel, ROLE_TYPE_KEYWORDS } from "@/types/filters";
 import { matchesAnyKeyword } from "@/lib/textMatch";
 import JobCard from "./JobCard";
 import Filters from "./Filters";
@@ -80,6 +80,8 @@ export default function JobFeed() {
       if (filters.roleType !== "all" && !matchesAnyKeyword(job.title, ROLE_TYPE_KEYWORDS[filters.roleType])) {
         return false;
       }
+
+      if (!matchesLevel(job.title, filters.level)) return false;
 
       if (location) {
         const isRemoteQuery = location === "remote";
