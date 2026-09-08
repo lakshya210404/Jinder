@@ -192,6 +192,32 @@ export const GREENHOUSE_COMPANIES: CompanyConfig[] = [
   { slug: "assemblyai", name: "AssemblyAI", domain: "assemblyai.com" },
   { slug: "speechmatics", name: "Speechmatics", domain: "speechmatics.com" },
   { slug: "wellsaidlabs", name: "WellSaid Labs", domain: "wellsaidlabs.com" },
+  { slug: "anthropic", name: "Anthropic", domain: "anthropic.com" },
+  { slug: "postman", name: "Postman", domain: "postman.com" },
+  { slug: "netlify", name: "Netlify", domain: "netlify.com" },
+
+  // Infra / manufacturing / hardware
+  { slug: "purestorage", name: "Pure Storage", domain: "purestorage.com" },
+  { slug: "fastly", name: "Fastly", domain: "fastly.com" },
+  { slug: "neo4j", name: "Neo4j", domain: "neo4j.com" },
+  { slug: "stackblitz", name: "StackBlitz", domain: "stackblitz.com" },
+  { slug: "xometry", name: "Xometry", domain: "xometry.com" },
+  { slug: "fictiv", name: "Fictiv", domain: "fictiv.com" },
+  { slug: "markforged", name: "Markforged", domain: "markforged.com" },
+  { slug: "formlabs", name: "Formlabs", domain: "formlabs.com" },
+
+  // Climate / energy
+  { slug: "patch", name: "Patch", domain: "patch.io" },
+  { slug: "cloverly", name: "Cloverly", domain: "cloverly.com" },
+  { slug: "antora", name: "Antora Energy", domain: "antoraenergy.com" },
+  { slug: "sunnova", name: "Sunnova", domain: "sunnova.com" },
+  { slug: "ursamajor", name: "Ursa Major", domain: "ursamajor.com" },
+  { slug: "wrike", name: "Wrike", domain: "wrike.com" },
+  { slug: "smartsheet", name: "Smartsheet", domain: "smartsheet.com" },
+  { slug: "upgrade", name: "Upgrade", domain: "upgrade.com" },
+  { slug: "earnest", name: "Earnest", domain: "earnest.com" },
+  { slug: "gofundme", name: "GoFundMe", domain: "gofundme.com" },
+  { slug: "mightynetworks", name: "Mighty Networks", domain: "mightynetworks.com" },
 ];
 
 export const LEVER_COMPANIES: CompanyConfig[] = [
@@ -209,6 +235,10 @@ export const LEVER_COMPANIES: CompanyConfig[] = [
   { slug: "moonpay", name: "MoonPay", domain: "moonpay.com" },
   { slug: "certik", name: "CertiK", domain: "certik.com" },
   { slug: "1inch", name: "1inch", domain: "1inch.io" },
+  { slug: "cloudinary", name: "Cloudinary", domain: "cloudinary.com" },
+  { slug: "charmindustrial", name: "Charm Industrial", domain: "charmindustrial.com" },
+  { slug: "arcadia", name: "Arcadia", domain: "arcadia.com" },
+  { slug: "omnisend", name: "Omnisend", domain: "omnisend.com" },
 ];
 
 export const ASHBY_COMPANIES: CompanyConfig[] = [
@@ -297,4 +327,17 @@ export const ASHBY_COMPANIES: CompanyConfig[] = [
   { slug: "speakeasy", name: "Speakeasy", domain: "speakeasy.com" },
   { slug: "orb", name: "Orb", domain: "withorb.com" },
   { slug: "lago", name: "Lago", domain: "getlago.com" },
+  { slug: "snowflake", name: "Snowflake", domain: "snowflake.com" },
+  { slug: "plaid", name: "Plaid", domain: "plaid.com" },
+  { slug: "benchling", name: "Benchling", domain: "benchling.com" },
+  { slug: "confluent", name: "Confluent", domain: "confluent.io" },
+  { slug: "bunny", name: "Bunny", domain: "bunny.net" },
+  { slug: "scalar", name: "Scalar", domain: "scalar.com" },
+  { slug: "kong", name: "Kong", domain: "konghq.com" },
+  { slug: "heirloomcarbon", name: "Heirloom", domain: "heirloomcarbon.com" },
+  { slug: "formenergy", name: "Form Energy", domain: "formenergy.com" },
+  { slug: "helion", name: "Helion Energy", domain: "helionenergy.com" },
+  { slug: "span", name: "Span", domain: "span.io" },
+  { slug: "aurorasolar", name: "Aurora Solar", domain: "aurorasolar.com" },
+  { slug: "titan", name: "Titan", domain: "titan.com" },
 ];

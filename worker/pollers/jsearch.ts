@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { upsertJobs } from "../db";
 import { fetchJson } from "../http";
 import { extractTags, isRemoteLocation } from "../normalizer";
@@ -37,6 +38,18 @@ interface JSearchResponse {
   data: { jobs: JSearchJob[]; cursor?: string };
 }
 
+/**
+ * JSearch's `job_id` is NOT a stable job identifier — it's an opaque result
+ * token that changes between search calls even for the exact same posting
+ * (confirmed: the same title+company accumulated 30 distinct job_ids across
+ * poll cycles). Deriving a content-based fingerprint instead so upsert dedup
+ * on (source, external_id) actually works.
+ */
+function stableJobId(job: Pick<JSearchJob, "employer_name" | "job_title">, country: Country): string {
+  const fingerprint = `${job.employer_name}|${job.job_title}|${country}`.toLowerCase().trim();
+  return createHash("sha1").update(fingerprint).digest("hex");
+}
+
 export async function pollJSearch(): Promise<void> {
   if (!JSEARCH_API_KEY) {
     console.warn("[jsearch] JSEARCH_API_KEY not set, skipping");
@@ -68,7 +81,7 @@ export async function pollJSearch(): Promise<void> {
 
         allJobs.push({
           source: "jsearch",
-          external_id: job.job_id,
+          external_id: stableJobId(job, code),
           title: job.job_title,
           company: job.employer_name,
           company_logo: job.employer_logo,
