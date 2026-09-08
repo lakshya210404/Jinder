@@ -14,13 +14,17 @@ import { pollJobBank } from "./pollers/jobbank";
 // Re-enable (uncomment the import above, the constant below, and the
 // schedule(...) call in main()) only after upgrading to a paid plan.
 // import { pollJSearch } from "./pollers/jsearch";
+import { pollJobicy } from "./pollers/jobicy";
 import { pollLever } from "./pollers/lever";
 import { pollRemoteOk } from "./pollers/remoteok";
+import { pollTheMuse } from "./pollers/themuse";
 
 // const JSEARCH_INTERVAL_MS = 6 * 60 * 60 * 1000; // unused while JSearch is disabled, see import above
 const ATS_INTERVAL_MS = 20 * 60 * 1000; // company boards change slowly; 20 min is plenty
 const REMOTEOK_INTERVAL_MS = 10 * 60 * 1000;
 const JOBBANK_INTERVAL_MS = 15 * 60 * 1000;
+const MUSE_INTERVAL_MS = 30 * 60 * 1000; // bigger fetch (up to 40 requests/cycle), so a longer interval
+const JOBICY_INTERVAL_MS = 15 * 60 * 1000;
 
 type PollerFn = () => Promise<void>;
 
@@ -54,6 +58,8 @@ function main(): void {
   // schedule("jsearch", pollJSearch, JSEARCH_INTERVAL_MS); // disabled — see import comment above
   schedule("remoteok", pollRemoteOk, REMOTEOK_INTERVAL_MS);
   schedule("jobbank", pollJobBank, JOBBANK_INTERVAL_MS);
+  schedule("themuse", pollTheMuse, MUSE_INTERVAL_MS);
+  schedule("jobicy", pollJobicy, JOBICY_INTERVAL_MS);
 }
 
 main();

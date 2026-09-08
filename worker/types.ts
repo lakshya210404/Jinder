@@ -8,7 +8,9 @@ export type Source =
   | "jsearch"
   | "remoteok"
   | "jobbank"
-  | "amazon";
+  | "amazon"
+  | "themuse"
+  | "jobicy";
 
 /** Common shape every poller normalizes its source's response into before upsert. */
 export interface NormalizedJob {
