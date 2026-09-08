@@ -62,14 +62,27 @@ export const LEVEL_KEYWORDS: Record<Exclude<ExperienceLevel, "all">, string[]> =
   manager: ["manager", "director", "head of", "VP"],
 };
 
-/** Union of every level keyword — used to detect titles with no level signal at all. */
-const ALL_LEVEL_KEYWORDS = Object.values(LEVEL_KEYWORDS).flat();
+const PRODUCT_MANAGER_PATTERN = /product\s+manager/i;
+
+/**
+ * Whether a title carries a given level's signal. "manager" is special-cased:
+ * "Product Manager" is a job function, not a seniority marker, so it shouldn't
+ * count as a Manager-level signal on its own (director/head of/VP still do).
+ */
+function hasLevelSignal(title: string, level: Exclude<ExperienceLevel, "all">): boolean {
+  if (level !== "manager") return matchesAnyKeyword(title, LEVEL_KEYWORDS[level]);
+  const nonManagerWord = matchesAnyKeyword(title, ["director", "head of", "VP"]);
+  const managerWord = matchesAnyKeyword(title, ["manager"]) && !PRODUCT_MANAGER_PATTERN.test(title);
+  return nonManagerWord || managerWord;
+}
+
+const ALL_LEVELS: Exclude<ExperienceLevel, "all">[] = ["entry", "mid", "senior", "manager"];
 
 export function matchesLevel(title: string, level: ExperienceLevel): boolean {
   if (level === "all") return true;
-  if (matchesAnyKeyword(title, LEVEL_KEYWORDS[level])) return true;
+  if (hasLevelSignal(title, level)) return true;
   // Titles with no level indicator at all are assumed open to entry-level candidates.
-  return level === "entry" && !matchesAnyKeyword(title, ALL_LEVEL_KEYWORDS);
+  return level === "entry" && !ALL_LEVELS.some((l) => hasLevelSignal(title, l));
 }
 
 export interface FilterState {
