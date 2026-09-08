@@ -10,11 +10,14 @@ import { pollAmazon } from "./pollers/amazon";
 import { pollAshby } from "./pollers/ashby";
 import { pollGreenhouse } from "./pollers/greenhouse";
 import { pollJobBank } from "./pollers/jobbank";
-import { pollJSearch } from "./pollers/jsearch";
+// JSearch disabled: free RapidAPI tier hit 85% of its 200 req/month quota.
+// Re-enable (uncomment the import above, the constant below, and the
+// schedule(...) call in main()) only after upgrading to a paid plan.
+// import { pollJSearch } from "./pollers/jsearch";
 import { pollLever } from "./pollers/lever";
 import { pollRemoteOk } from "./pollers/remoteok";
 
-const JSEARCH_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS) || 5 * 60 * 1000; // every 5 min per spec
+// const JSEARCH_INTERVAL_MS = 6 * 60 * 60 * 1000; // unused while JSearch is disabled, see import above
 const ATS_INTERVAL_MS = 20 * 60 * 1000; // company boards change slowly; 20 min is plenty
 const REMOTEOK_INTERVAL_MS = 10 * 60 * 1000;
 const JOBBANK_INTERVAL_MS = 15 * 60 * 1000;
@@ -48,7 +51,7 @@ function main(): void {
   schedule("greenhouse", pollGreenhouse, ATS_INTERVAL_MS);
   schedule("lever", pollLever, ATS_INTERVAL_MS);
   schedule("ashby", pollAshby, ATS_INTERVAL_MS);
-  schedule("jsearch", pollJSearch, JSEARCH_INTERVAL_MS);
+  // schedule("jsearch", pollJSearch, JSEARCH_INTERVAL_MS); // disabled — see import comment above
   schedule("remoteok", pollRemoteOk, REMOTEOK_INTERVAL_MS);
   schedule("jobbank", pollJobBank, JOBBANK_INTERVAL_MS);
 }

@@ -4,10 +4,16 @@ import { fetchJson } from "../http";
 import { extractTags, isRemoteLocation } from "../normalizer";
 import { Country, NormalizedJob } from "../types";
 
-const JSEARCH_API_KEY = process.env.JSEARCH_API_KEY;
+// .trim() guards against a trailing newline/whitespace sneaking into the env
+// var (e.g. pasted into Railway's dashboard), which node-fetch/undici reject
+// outright with "is not a legal HTTP header value".
+const JSEARCH_API_KEY = process.env.JSEARCH_API_KEY?.trim();
 
-// Keep this list short: JSearch on RapidAPI is typically rate/quota limited,
-// and this poller is meant to run every ~5 min per QUERY_TERMS x COUNTRIES.
+// Keep this list short: JSearch's free RapidAPI tier is 200 requests/month
+// total. Each cycle makes QUERY_TERMS.length x COUNTRIES.length requests (4
+// today), and poller.ts runs this every 6 hours (120 cycles/month) — that's
+// already ~480 requests/month, over budget. Cut QUERY_TERMS or COUNTRIES, or
+// lengthen JSEARCH_INTERVAL_MS in poller.ts, before raising either list.
 const QUERY_TERMS = ["software engineer", "product manager"];
 const COUNTRIES: { code: Country; jsearchParam: string }[] = [
   { code: "US", jsearchParam: "us" },
